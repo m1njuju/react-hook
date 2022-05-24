@@ -4,8 +4,9 @@ function reducer(state, action) {
   // 이전 state의 값을 스프레드 연산자로 안의 내용을 꺼낸 후
   // action.name과 action.value를 통해 새로운 속성값 작성
   return {
-    ...state,
+    ...state, // name:'ss', nickname:'ss'
     [action.name]: action.value,
+    // e.target.name : e.target.value
   };
 }
 const ReducerComp2 = () => {
