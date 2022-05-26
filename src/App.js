@@ -1,19 +1,46 @@
 import "./App.css";
-import React from "react";
+import React, { useReducer } from "react";
 import { ThemeContext } from "./components/ThemeContext";
 import ExReducer from "./components/ExReducer";
 import HookComp from "./components/HookComp";
 import MemoHook from "./components/MemoHook";
 import ReducerComp from "./components/ReducerComp";
 import ReducerComp2 from "./components/ReducerComp2";
+import ContextHook from "./components/ContextHook";
+import { DispatchContext, StateContext } from "./components/DispatchContext";
+import DispatchComp from "./components/DispatchComp";
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "id_plus":
+      return { ...state, id: state.id + 1 };
+    case "text_change":
+      return { ...state, text: action.payload };
+  }
+}
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, {
+    id: 1,
+    text: "reducer의 텍스트입니다",
+  });
+
   return (
     <div className="App">
-      <ThemeContext.Provider value="light">
+      <ThemeContext.Provider value={{ id: 0, text: "객체형식입니다" }}>
         <ContextHook />
       </ThemeContext.Provider>
+      <DispatchContext.Consumer>
+        {(value) => <button>{value}</button>}
+      </DispatchContext.Consumer>
 
+      <DispatchContext.Provider value={dispatch}>
+        <StateContext.Provider value={state}>
+          <h1> {state.id} </h1>
+          <h3> {state.text} </h3>
+          <DispatchComp />
+        </StateContext.Provider>
+      </DispatchContext.Provider>
       <MemoHook />
       <HookComp />
       <ReducerComp />
@@ -22,27 +49,5 @@ function App() {
     </div>
   );
 }
-
-function ContextHook() {
-  return (
-    <div>
-      <ThemedButton />
-    </div>
-  );
-}
-
-class ThemedButton extends React.Component {
-  // 현재 선택된 테마 값을 읽기 위해 contextType을 지정합니다.
-  // React는 가장 가까이 있는 테마 Provider를 찾아 그 값을 사용할 것입니다.
-  // 이 예시에서 현재 선택된 테마는 dark입니다.
-  static contextType = ThemeContext;
-  render() {
-    return <Button theme={this.context} />;
-  }
-}
-
-const Button = (props) => {
-  return <h1>{props.theme}</h1>;
-};
 
 export default App;
